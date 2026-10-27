@@ -3,56 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAR Video Player with Mind-AR</title>
-    
-    <!-- นำเข้า A-Frame และ Mind-AR Library -->
+    <title>WebAR Video Player</title>
     <script src="https://aframe.io"></script>
     <script src="https://jsdelivr.net"></script>
 </head>
 <body>
-
-    <!-- ส่วนจำลองฉาก AR: ระบุตําแหน่งไฟล์ .mind ที่นี่ -->
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiScanning: yes; uiError: yes;" 
-             color-space="sRGB" 
-             renderer="colorManagement: true, physicallyCorrectLights" 
-             vr-mode-ui="enabled: false" 
-             device-orientation-permission-ui="enabled: false">
-        
-        <!-- ส่วนโหลด Assets (วิดีโอ) เตรียมไว้ล่วงหน้า -->
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiScanning: yes;" 
+             vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         <a-assets>
+            <!-- เรียกใช้ไฟล์วิดีโอชื่อ video.mp4 -->
             <video id="ar-video" src="./video.mp4" response-type="arraybuffer" loop="true" crossorigin="anonymous" playsinline webkit-playsinline></video>
         </a-assets>
-
-        <!-- ส่วนของมุมมองกล้องมือถือ -->
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
-        <!-- ส่วนตรวจจับภาพ: targetIndex: 0 หมายถึงรูปภาพที่ 1 ในไฟล์ .mind -->
         
-            <!-- แสดงผลวิดีโอทับบนรูปภาพในระนาบแนวตั้ง (รูปทรงสี่เหลี่ยมผืนผ้า) -->
-            <a-video src="#ar-video" width="1" height="0.56" rotation="0 0 0" position="0 0 0"></a-video>
-        
+            <a-video src="#ar-video" width="1" height="0.56" position="0 0 0"></a-video>
         
     </a-scene>
-
-    <!-- สคริปต์ควบคุมควบคุมให้วิดีโอ "เล่น" เมื่อเจอภาพ และ "หยุด" เมื่อภาพหายไป -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const targetEntity = document.querySelector('#target-entity');
             const video = document.querySelector('#ar-video');
-
-            // เมื่อกล้องสแกนเจอภาพ Trigger Image
-            targetEntity.addEventListener("targetFound", event => {
-                console.log("พบภาพต้นแบบ: เริ่มเล่นวิดีโอ");
-                video.play();
-            });
-
-            // เมื่อผู้ใช้หันกล้องหนีออกจากภาพ
-            targetEntity.addEventListener("targetLost", event => {
-                console.log("ภาพหายไป: หยุดวิดีโอชั่วคราว");
-                video.pause();
-            });
+            targetEntity.addEventListener("targetFound", () => { video.play(); });
+            targetEntity.addEventListener("targetLost", () => { video.pause(); });
         });
     </script>
-
 </body>
 </html>
